@@ -18,43 +18,39 @@
 
         #vessel-container {
             position: relative;
-            /* Scaled up significantly */
-            width: 800px; 
-            height: 800px;
-            margin-right: -50px; /* Let the arms bleed off slightly */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            /* Matches the scale of the body to the head perfectly */
+            width: 900px; 
+            height: 900px;
+            margin-right: -100px;
         }
 
-        /* THE BODY */
-        #body-img {
+        /* Both images are now forced to be the same size so they align naturally */
+        .vessel-part {
             position: absolute;
             width: 100%;
-            height: auto;
-            bottom: 50px;
-            z-index: 1;
+            height: 100%;
+            object-fit: contain;
             pointer-events: none;
         }
 
-        /* THE HEAD WRAPPER */
+        #body-img {
+            z-index: 1;
+        }
+
         #head-wrapper {
             position: absolute;
-            /* Alignment: Adjust 'bottom' and 'left' to lock head to neck */
-            bottom: 512px; 
-            left: 442px;
-            width: 150px; 
+            width: 100%;
+            height: 100%;
             z-index: 2;
-            /* Pivot point: Bottom center of the head image */
-            transform-origin: bottom center; 
+            /* Adjust the % until the "+" is exactly on the neck stump */
+            transform-origin: 49% 21%; 
             will-change: transform;
         }
 
         #head-img {
             width: 100%;
-            height: auto;
-            display: block;
+            height: 100%;
+            object-fit: contain;
         }
 
         #buy-now {
@@ -76,13 +72,13 @@
 <body>
 
     <div id="vessel-container">
-        <!-- HEAD -->
+        <!-- BODY -->
+        <img src="body.png" id="body-img" class="vessel-part">
+
+        <!-- HEAD WRAPPER -->
         <div id="head-wrapper">
             <img src="head.png" id="head-img">
         </div>
-
-        <!-- BODY -->
-        <img src="body.png" id="body-img">
     </div>
 
     <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
@@ -93,29 +89,23 @@
         document.addEventListener('mousemove', (e) => {
             const rect = head.getBoundingClientRect();
             
-            // Pivot point is at the bottom center of the head
-            const pivotX = rect.left + (rect.width / 2);
-            const pivotY = rect.bottom;
+            // Calculate center of head-wrapper for rotation
+            // 0.49 and 0.21 match the transform-origin % in CSS
+            const pivotX = rect.left + (rect.width * 0.49);
+            const pivotY = rect.top + (rect.height * 0.21);
 
-            // Calculate angle between mouse and neck pivot
             const deltaY = e.clientY - pivotY;
             const deltaX = e.clientX - pivotX;
             const angle = Math.atan2(deltaY, deltaX);
             
-            // Convert to degrees
             let rotation = angle * (180 / Math.PI);
 
-            /* 
-               OFFSET CALIBRATION
-               Since it's a side view, we want to limit the look 
-               so the head doesn't spin 360 degrees.
-            */
-            // Adjust the '+ 90' or '- 90' until the head "points" correctly
-            let finalRotation = rotation + 90;
+            // Side view calibration
+            let finalRotation = rotation + 10; 
 
-            // Clamp rotation so he doesn't snap his neck (Optional)
-            if (finalRotation > 30) finalRotation = 30;
-            if (finalRotation < -60) finalRotation = -60;
+            // Neck safety clamping
+            if (finalRotation > 25) finalRotation = 25;
+            if (finalRotation < -45) finalRotation = -45;
 
             head.style.transform = `rotate(${finalRotation}deg)`;
         });

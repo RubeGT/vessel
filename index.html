@@ -19,7 +19,6 @@
         #plushie-wrapper {
             position: relative;
             display: inline-block;
-            /* Match the width of your bodynoeyes.png */
             width: 600px; 
         }
 
@@ -29,39 +28,29 @@
             pointer-events: none;
         }
 
-        /* THE FACE PLATE POSITIONING */
-        .eye-container {
-            position: absolute;
-            top: 17.5%;  /* Move this to align with the gorilla's face */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20%; /* Distance between eyes */
-            display: flex;
-            justify-content: space-around;
-            z-index: 10;
-        }
-
-        /* THE "Drawn" DOT EYES */
+        /* Base properties for both eyes */
         .eye-dot {
-            width: 15px;
-            height: 15px;
-            background-color: #ff0000; /* Creepy Red */
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: #fff; /* Plain white/grey dots */
             border-radius: 50%;
-            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; /* Glowing effect */
-            position: relative;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* Optional: Adding a tiny black pupil inside the dot */
-        .eye-dot::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            background: black;
-            border-radius: 50%;
+        /* 
+           CALIBRATION SECTION:
+           Manually nudge these until they sit in the sockets.
+        */
+        #eye-left {
+            top: 18.5%;   
+            left: 42.5%;  /* Moved a tad left */
+        }
+
+        #eye-right {
+            top: 18.5%;
+            left: 52.5%; /* Adjust this to fix the offset */
         }
 
         #buy-now {
@@ -75,7 +64,6 @@
             text-decoration: none;
             border: 1px solid white;
             font-weight: bold;
-            box-shadow: 0 0 10px red;
         }
     </style>
 </head>
@@ -84,10 +72,9 @@
     <div id="plushie-wrapper">
         <img id="plushie-body" src="bodynoeyes.png">
         
-        <div class="eye-container">
-            <div class="eye-dot"></div>
-            <div class="eye-dot"></div>
-        </div>
+        <!-- Individual eyes for precise control -->
+        <div class="eye-dot" id="eye-left"></div>
+        <div class="eye-dot" id="eye-right"></div>
 
         <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
     </div>
@@ -101,12 +88,10 @@
                 const eyeX = rect.left + rect.width / 2;
                 const eyeY = rect.top + rect.height / 2;
 
-                // Instead of rotating the whole eye, we'll shift the dot slightly
-                // to simulate it "looking" toward the mouse.
                 const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
                 
-                // Max distance the pupil moves inside the socket (in pixels)
-                const distance = 4; 
+                // The distance the dot moves toward your mouse
+                const distance = 3; 
                 const moveX = Math.cos(angle) * distance;
                 const moveY = Math.sin(angle) * distance;
 

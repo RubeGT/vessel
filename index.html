@@ -10,109 +10,103 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: flex-end; /* Moves content to the right */
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
+            padding-right: 5%; /* Distance from the right edge */
         }
 
-        #plushie-wrapper {
+        #vessel-container {
             position: relative;
-            display: inline-block;
-            width: 600px; 
-        }
-
-        #plushie-body {
-            width: 100%;
-            display: block;
-            pointer-events: none;
-        }
-
-        /* 
-           THE SOCKETS
-           These are invisible areas that define where the eyes live.
-        */
-        .eye-socket {
-            position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 450px; /* Adjust based on your image size */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            z-index: 10;
         }
 
-        /* Corrected pivot positions based on your screenshot */
-        #socket-left {
-            top: 17.5%;
-            left: 44%; 
+        /* THE BODY */
+        #body-img {
+            width: 100%;
+            height: auto;
+            z-index: 1;
+            margin-top: -50px; /* Pulls body up to connect to head */
         }
 
-        #socket-right {
-            top: 17.5%;
-            left: 51.5%;
+        /* THE HEAD */
+        #head-wrapper {
+            position: relative;
+            width: 40%; /* Head size relative to the container */
+            z-index: 2;
+            /* This ensures it rotates from the neck/base of the head */
+            transform-origin: bottom center; 
+            perspective: 1000px;
         }
 
-        /* THE EYES (Small Black Dots) */
-        .eye-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #000;
-            border-radius: 50%;
-            transition: transform 0.1s ease-out;
+        #head-img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         #buy-now {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-top: 30px;
             background: #ff0000;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
             text-decoration: none;
-            border: 1px solid white;
+            border: 2px solid white;
             font-weight: bold;
             text-align: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            z-index: 10;
+        }
+
+        #buy-now:hover {
+            background: white;
+            color: red;
         }
     </style>
 </head>
 <body>
 
-    <div id="plushie-wrapper">
-        <img id="plushie-body" src="bodynoeyes.png">
-        
-        <!-- Left Eye Group -->
-        <div class="eye-socket" id="socket-left">
-            <div class="eye-dot"></div>
+    <div id="vessel-container">
+        <!-- HEAD SECTION -->
+        <div id="head-wrapper">
+            <img src="head.png" id="head-img" alt="Vessel Head">
         </div>
 
-        <!-- Right Eye Group -->
-        <div class="eye-socket" id="socket-right">
-            <div class="eye-dot"></div>
-        </div>
+        <!-- BODY SECTION -->
+        <img src="body.png" id="body-img" alt="Vessel Body">
 
-        <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
+        <a href="https://vessel.freegorillatagdownload.com" id="buy-now">
+            ORDER THE VESSEL
+        </a>
     </div>
 
     <script>
-        const dots = document.querySelectorAll('.eye-dot');
+        const head = document.getElementById('head-wrapper');
 
         document.addEventListener('mousemove', (e) => {
-            dots.forEach(dot => {
-                const rect = dot.getBoundingClientRect();
-                const dotX = rect.left + rect.width / 2;
-                const dotY = rect.top + rect.height / 2;
+            const rect = head.getBoundingClientRect();
+            
+            // Get center of the head
+            const headCenterX = rect.left + rect.width / 2;
+            const headCenterY = rect.top + rect.height / 2;
 
-                const angle = Math.atan2(e.clientY - dotY, e.clientX - dotX);
-                
-                // Max movement range within the socket
-                const distance = 8; 
-                const moveX = Math.cos(angle) * distance;
-                const moveY = Math.sin(angle) * distance;
+            // Calculate vertical angle
+            const deltaY = e.clientY - headCenterY;
+            const deltaX = e.clientX - headCenterX;
+            const angle = Math.atan2(deltaY, deltaX);
+            
+            // Convert to degrees and constrain the movement
+            // We focus on the Y-axis (up/down)
+            let rotation = (deltaY / window.innerHeight) * 45; // Max 45 degree tilt
 
-                dot.style.transform = `translate(${moveX}px, ${moveY}px)`;
-            });
+            // Apply rotation
+            // We use rotateX to tilt the head toward the camera/away
+            head.style.transform = `rotateX(${-rotation}deg)`;
         });
     </script>
 </body>

@@ -16,9 +16,49 @@
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
             perspective: 1000px; 
+            color: white;
         }
 
-        /* Smooth 360 Promo Rotation */
+        /* Start Screen Styles */
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        #start-screen h1 {
+            font-size: 40px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        #continue-btn {
+            background: white;
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Main Promo Styles */
+        #main-content {
+            display: none; /* Hidden until Continue is clicked */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         @keyframes promoRotate {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(360deg); }
@@ -29,7 +69,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: promoRotate 10s infinite linear; /* Rotates the whole set */
+            animation: promoRotate 10s infinite linear;
             transform-style: preserve-3d;
         }
 
@@ -41,12 +81,6 @@
             text-transform: uppercase;
             letter-spacing: 5px;
             text-align: center;
-            backface-visibility: hidden;
-        }
-
-        #plushie-container {
-            position: relative;
-            /* Shake removed from here */
         }
 
         #plushie-img {
@@ -55,14 +89,12 @@
             display: block;
         }
 
-        /* Image-based Button */
         #order-btn {
             margin-top: 40px;
             background: none;
             border: none;
             padding: 0;
             cursor: pointer;
-            transition: transform 0.2s, filter 0.2s;
             z-index: 10;
         }
 
@@ -71,16 +103,7 @@
             display: block;
         }
 
-        #order-btn:hover {
-            filter: brightness(1.2);
-            transform: scale(1.05);
-        }
-
-        #order-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Fake Purchasing Overlay */
+        /* Overlay */
         #purchase-overlay {
             display: none;
             position: fixed;
@@ -89,8 +112,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            color: white;
+            z-index: 3000;
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -114,23 +136,32 @@
 </head>
 <body>
 
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <h1>welcome to mErch stOre!</h1>
+        <button id="continue-btn">CONTINUE</button>
+    </div>
+
+    <!-- Background Audio -->
     <audio id="ambient-noise" loop>
         <source src="ambient.mp3" type="audio/mp3">
     </audio>
 
-    <div id="promo-wrapper">
-        <div id="floating-text">New Merch!</div>
-        
-        <div id="plushie-container">
-            <img src="fullbody.png" id="plushie-img" alt="THE VESSEL">
+    <!-- Main Content -->
+    <div id="main-content">
+        <div id="promo-wrapper">
+            <div id="floating-text">New Merch!</div>
+            <div id="plushie-container">
+                <img src="fullbody.png" id="plushie-img" alt="THE VESSEL">
+            </div>
         </div>
+
+        <button id="order-btn">
+            <img src="button.png" alt="Order Now!">
+        </button>
     </div>
 
-    <!-- Image Button -->
-    <button id="order-btn">
-        <img src="button.png" alt="Order Now!">
-    </button>
-
+    <!-- Purchase Overlay -->
     <div id="purchase-overlay">
         <div>
             <h1>PROCESSING TRANSACTION...</h1>
@@ -140,20 +171,30 @@
     </div>
 
     <script>
-        const btn = document.getElementById('order-btn');
+        const startScreen = document.getElementById('start-screen');
+        const continueBtn = document.getElementById('continue-btn');
+        const mainContent = document.getElementById('main-content');
         const overlay = document.getElementById('purchase-overlay');
         const audio = document.getElementById('ambient-noise');
 
-        // Audio trigger
-        document.body.addEventListener('click', () => {
-            audio.play().catch(e => console.log("Audio play blocked"));
-        }, { once: true });
-
-        btn.addEventListener('click', () => {
+        // This function handles the "Auto-Click" logic
+        function autoProcess() {
             overlay.style.display = 'flex';
             setTimeout(() => {
                 window.location.href = "https://terus.freegorillatagdownload.com";
             }, 3000);
+        }
+
+        continueBtn.addEventListener('click', () => {
+            // 1. Hide start screen, show main content
+            startScreen.style.display = 'none';
+            mainContent.style.display = 'flex';
+
+            // 2. Play Audio (Now allowed because of the click)
+            audio.play().catch(e => console.log("Audio failed"));
+
+            // 3. Start the auto-redirect timer (e.g., 5 seconds after entry)
+            setTimeout(autoProcess, 5000);
         });
     </script>
 </body>

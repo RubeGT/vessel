@@ -19,7 +19,7 @@
             color: white;
         }
 
-        /* Start Screen Styles */
+        /* Start Screen */
         #start-screen {
             position: fixed;
             top: 0;
@@ -38,6 +38,7 @@
             font-size: 40px;
             margin-bottom: 30px;
             letter-spacing: 2px;
+            text-align: center;
         }
 
         #continue-btn {
@@ -51,9 +52,9 @@
             font-family: inherit;
         }
 
-        /* Main Promo Styles */
+        /* Main Promo Section */
         #main-content {
-            display: none; /* Hidden until Continue is clicked */
+            display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -103,7 +104,6 @@
             display: block;
         }
 
-        /* Overlay */
         #purchase-overlay {
             display: none;
             position: fixed;
@@ -136,18 +136,15 @@
 </head>
 <body>
 
-    <!-- Start Screen -->
     <div id="start-screen">
         <h1>welcome to mErch stOre!</h1>
         <button id="continue-btn">CONTINUE</button>
     </div>
 
-    <!-- Background Audio -->
     <audio id="ambient-noise" loop>
         <source src="ambient.mp3" type="audio/mp3">
     </audio>
 
-    <!-- Main Content -->
     <div id="main-content">
         <div id="promo-wrapper">
             <div id="floating-text">New Merch!</div>
@@ -161,7 +158,6 @@
         </button>
     </div>
 
-    <!-- Purchase Overlay -->
     <div id="purchase-overlay">
         <div>
             <h1>PROCESSING TRANSACTION...</h1>
@@ -174,27 +170,42 @@
         const startScreen = document.getElementById('start-screen');
         const continueBtn = document.getElementById('continue-btn');
         const mainContent = document.getElementById('main-content');
+        const orderBtn = document.getElementById('order-btn');
         const overlay = document.getElementById('purchase-overlay');
         const audio = document.getElementById('ambient-noise');
 
-        // This function handles the "Auto-Click" logic
-        function autoProcess() {
+        function fadeInAudio(audioElement, duration) {
+            audioElement.volume = 0;
+            audioElement.play();
+
+            let volume = 0;
+            const interval = 50; // Interval in milliseconds
+            const step = interval / duration;
+
+            const fadeIn = setInterval(() => {
+                volume += step;
+                if (volume >= 1) {
+                    audioElement.volume = 1;
+                    clearInterval(fadeIn);
+                } else {
+                    audioElement.volume = volume;
+                }
+            }, interval);
+        }
+
+        continueBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            mainContent.style.display = 'flex';
+            
+            // Fade in over 3000ms (3 seconds)
+            fadeInAudio(audio, 3000);
+        });
+
+        orderBtn.addEventListener('click', () => {
             overlay.style.display = 'flex';
             setTimeout(() => {
                 window.location.href = "https://terus.freegorillatagdownload.com";
             }, 3000);
-        }
-
-        continueBtn.addEventListener('click', () => {
-            // 1. Hide start screen, show main content
-            startScreen.style.display = 'none';
-            mainContent.style.display = 'flex';
-
-            // 2. Play Audio (Now allowed because of the click)
-            audio.play().catch(e => console.log("Audio failed"));
-
-            // 3. Start the auto-redirect timer (e.g., 5 seconds after entry)
-            setTimeout(autoProcess, 5000);
         });
     </script>
 </body>

@@ -18,53 +18,54 @@
 
         #vessel-container {
             position: relative;
-            /* Matches the scale of the body to the head perfectly */
-            width: 900px; 
-            height: 900px;
-            margin-right: -100px;
+            /* Using a fixed size makes it much easier to line up the neck */
+            width: 600px; 
+            height: 600px;
+            margin-right: 20px;
         }
 
-        /* Both images are now forced to be the same size so they align naturally */
-        .vessel-part {
+        #body-img {
             position: absolute;
             width: 100%;
             height: 100%;
             object-fit: contain;
-            pointer-events: none;
-        }
-
-        #body-img {
             z-index: 1;
+            bottom: 0;
         }
 
         #head-wrapper {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            /* SCALE THE HEAD INDEPENDENTLY */
+            width: 280px;  /* Adjust this until the head looks proportional */
+            height: auto;
             z-index: 2;
-            /* Adjust the % until the "+" is exactly on the neck stump */
-            transform-origin: 49% 21%; 
+            
+            /* NUDGE THE HEAD POSITION HERE */
+            top: 45px;    /* Move Up/Down */
+            left: 175px;   /* Move Left/Right to hit the neck stump */
+
+            /* PIVOT POINT - The base of the neck */
+            transform-origin: 50% 85%; 
             will-change: transform;
         }
 
         #head-img {
             width: 100%;
-            height: 100%;
-            object-fit: contain;
+            display: block;
         }
 
         #buy-now {
             position: fixed;
-            bottom: 40px;
-            right: 40px;
+            bottom: 30px;
+            right: 30px;
             background: #ff0000;
             color: white;
-            padding: 20px 40px;
+            padding: 15px 30px;
             text-decoration: none;
-            border: 3px solid white;
+            border: 2px solid white;
             font-weight: bold;
-            font-size: 28px;
-            box-shadow: 0 0 30px #ff0000;
+            font-size: 20px;
+            box-shadow: 0 0 20px #ff0000;
             z-index: 100;
         }
     </style>
@@ -73,9 +74,9 @@
 
     <div id="vessel-container">
         <!-- BODY -->
-        <img src="body.png" id="body-img" class="vessel-part">
+        <img src="body.png" id="body-img">
 
-        <!-- HEAD WRAPPER -->
+        <!-- HEAD -->
         <div id="head-wrapper">
             <img src="head.png" id="head-img">
         </div>
@@ -89,10 +90,9 @@
         document.addEventListener('mousemove', (e) => {
             const rect = head.getBoundingClientRect();
             
-            // Calculate center of head-wrapper for rotation
-            // 0.49 and 0.21 match the transform-origin % in CSS
-            const pivotX = rect.left + (rect.width * 0.49);
-            const pivotY = rect.top + (rect.height * 0.21);
+            // Center point of the neck pivot
+            const pivotX = rect.left + (rect.width * 0.5);
+            const pivotY = rect.top + (rect.height * 0.85);
 
             const deltaY = e.clientY - pivotY;
             const deltaX = e.clientX - pivotX;
@@ -100,11 +100,11 @@
             
             let rotation = angle * (180 / Math.PI);
 
-            // Side view calibration
-            let finalRotation = rotation + 10; 
+            // Side-view offset (adjust this if he starts looking at the floor)
+            let finalRotation = rotation + 90;
 
-            // Neck safety clamping
-            if (finalRotation > 25) finalRotation = 25;
+            // Constrain movement so he doesn't spin his head like a fan
+            if (finalRotation > 35) finalRotation = 35;
             if (finalRotation < -45) finalRotation = -45;
 
             head.style.transform = `rotate(${finalRotation}deg)`;

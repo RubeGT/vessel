@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>vessel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE VESSEL</title>
     <style>
         body {
             background-color: #000;
@@ -17,64 +18,64 @@
 
         #plushie-wrapper {
             position: relative;
-            /* Adjust this width to match your actual bodynoeyes.png size */
+            display: inline-block;
+            /* Match the width of your bodynoeyes.png */
             width: 600px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         #plushie-body {
             width: 100%;
             display: block;
             pointer-events: none;
-            z-index: 1;
         }
 
-        /* 
-           TARGETING THE FACE PLATE:
-           Based on your provided proportions, the face is roughly 
-           1/5th down from the top.
-        */
+        /* THE FACE PLATE POSITIONING */
         .eye-container {
             position: absolute;
-            top: 17%;  /* Adjusted for the specific head height */
+            top: 17.5%;  /* Move this to align with the gorilla's face */
             left: 50%;
             transform: translateX(-50%);
+            width: 20%; /* Distance between eyes */
             display: flex;
-            justify-content: center;
-            gap: 12px; /* This controls how far apart the eyes are */
-            z-index: 2;
-            pointer-events: none;
+            justify-content: space-around;
+            z-index: 10;
         }
 
-        .eye-socket {
-            width: 32px; /* Size of the eyes.png */
-            height: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* THE "Drawn" DOT EYES */
+        .eye-dot {
+            width: 15px;
+            height: 15px;
+            background-color: #ff0000; /* Creepy Red */
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; /* Glowing effect */
+            position: relative;
         }
 
-        .eye-img {
-            width: 100%;
-            height: auto;
-            transform-origin: center center;
+        /* Optional: Adding a tiny black pupil inside the dot */
+        .eye-dot::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: black;
+            border-radius: 50%;
         }
 
         #buy-now {
-            margin-top: 20px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: #ff0000;
             color: white;
-            padding: 15px 35px;
-            font-weight: bold;
-            border: 2px solid white;
-            cursor: pointer;
+            padding: 10px 20px;
             text-decoration: none;
-            font-size: 22px;
-            text-align: center;
-            box-shadow: 0 0 15px #ff0000;
-            z-index: 10;
+            border: 1px solid white;
+            font-weight: bold;
+            box-shadow: 0 0 10px red;
         }
     </style>
 </head>
@@ -84,21 +85,15 @@
         <img id="plushie-body" src="bodynoeyes.png">
         
         <div class="eye-container">
-            <div class="eye-socket">
-                <img src="eyes.png" class="eye-img">
-            </div>
-            <div class="eye-socket">
-                <img src="eyes.png" class="eye-img">
-            </div>
+            <div class="eye-dot"></div>
+            <div class="eye-dot"></div>
         </div>
 
-        <a href="https://vessel.freegorillatagdownload.com" id="buy-now">
-            buy now!
-        </a>
+        <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
     </div>
 
     <script>
-        const eyes = document.querySelectorAll('.eye-img');
+        const eyes = document.querySelectorAll('.eye-dot');
 
         document.addEventListener('mousemove', (e) => {
             eyes.forEach(eye => {
@@ -106,12 +101,16 @@
                 const eyeX = rect.left + rect.width / 2;
                 const eyeY = rect.top + rect.height / 2;
 
+                // Instead of rotating the whole eye, we'll shift the dot slightly
+                // to simulate it "looking" toward the mouse.
                 const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
-                const rot = angle * (180 / Math.PI);
+                
+                // Max distance the pupil moves inside the socket (in pixels)
+                const distance = 4; 
+                const moveX = Math.cos(angle) * distance;
+                const moveY = Math.sin(angle) * distance;
 
-                // Added 90 degree offset. 
-                // Adjust if the pupils aren't pointing at the mouse.
-                eye.style.transform = `rotate(${rot + 90}deg)`;
+                eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
             });
         });
     </script>

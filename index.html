@@ -28,29 +28,38 @@
             pointer-events: none;
         }
 
-        /* Base properties for both eyes */
-        .eye-dot {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background-color: #fff; /* Plain white/grey dots */
-            border-radius: 50%;
-            z-index: 10;
-            pointer-events: none;
-        }
-
         /* 
-           CALIBRATION SECTION:
-           Manually nudge these until they sit in the sockets.
+           THE SOCKETS
+           These are invisible areas that define where the eyes live.
         */
-        #eye-left {
-            top: 18.5%;   
-            left: 42.5%;  /* Moved a tad left */
+        .eye-socket {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
         }
 
-        #eye-right {
-            top: 18.5%;
-            left: 52.5%; /* Adjust this to fix the offset */
+        /* Corrected pivot positions based on your screenshot */
+        #socket-left {
+            top: 17.5%;
+            left: 44%; 
+        }
+
+        #socket-right {
+            top: 17.5%;
+            left: 51.5%;
+        }
+
+        /* THE EYES (Small Black Dots) */
+        .eye-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #000;
+            border-radius: 50%;
+            transition: transform 0.1s ease-out;
         }
 
         #buy-now {
@@ -64,6 +73,7 @@
             text-decoration: none;
             border: 1px solid white;
             font-weight: bold;
+            text-align: center;
         }
     </style>
 </head>
@@ -72,30 +82,36 @@
     <div id="plushie-wrapper">
         <img id="plushie-body" src="bodynoeyes.png">
         
-        <!-- Individual eyes for precise control -->
-        <div class="eye-dot" id="eye-left"></div>
-        <div class="eye-dot" id="eye-right"></div>
+        <!-- Left Eye Group -->
+        <div class="eye-socket" id="socket-left">
+            <div class="eye-dot"></div>
+        </div>
+
+        <!-- Right Eye Group -->
+        <div class="eye-socket" id="socket-right">
+            <div class="eye-dot"></div>
+        </div>
 
         <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
     </div>
 
     <script>
-        const eyes = document.querySelectorAll('.eye-dot');
+        const dots = document.querySelectorAll('.eye-dot');
 
         document.addEventListener('mousemove', (e) => {
-            eyes.forEach(eye => {
-                const rect = eye.getBoundingClientRect();
-                const eyeX = rect.left + rect.width / 2;
-                const eyeY = rect.top + rect.height / 2;
+            dots.forEach(dot => {
+                const rect = dot.getBoundingClientRect();
+                const dotX = rect.left + rect.width / 2;
+                const dotY = rect.top + rect.height / 2;
 
-                const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
+                const angle = Math.atan2(e.clientY - dotY, e.clientX - dotX);
                 
-                // The distance the dot moves toward your mouse
-                const distance = 3; 
+                // Max movement range within the socket
+                const distance = 8; 
                 const moveX = Math.cos(angle) * distance;
                 const moveY = Math.sin(angle) * distance;
 
-                eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                dot.style.transform = `translate(${moveX}px, ${moveY}px)`;
             });
         });
     </script>

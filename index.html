@@ -18,35 +18,35 @@
 
         #vessel-container {
             position: relative;
-            /* Using a fixed size makes it much easier to line up the neck */
-            width: 600px; 
-            height: 600px;
+            width: 700px; 
+            height: 800px;
             margin-right: 20px;
+            /* Keeps everything aligned to the bottom right */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
         }
 
         #body-img {
-            position: absolute;
             width: 100%;
-            height: 100%;
-            object-fit: contain;
+            height: auto;
             z-index: 1;
-            bottom: 0;
+            pointer-events: none;
         }
 
         #head-wrapper {
             position: absolute;
-            /* SCALE THE HEAD INDEPENDENTLY */
-            width: 280px;  /* Adjust this until the head looks proportional */
-            height: auto;
-            z-index: 2;
+            /* MANUAL ALIGNMENT - Adjust these to "dock" the head to the neck */
+            width: 320px; 
+            bottom: 485px; 
+            left: 170px;
             
-            /* NUDGE THE HEAD POSITION HERE */
-            top: 45px;    /* Move Up/Down */
-            left: 175px;   /* Move Left/Right to hit the neck stump */
-
-            /* PIVOT POINT - The base of the neck */
-            transform-origin: 50% 85%; 
+            z-index: 2;
+            /* SML STYLE: Pivot from the bottom middle of the head */
+            transform-origin: bottom center; 
             will-change: transform;
+            pointer-events: none;
         }
 
         #head-img {
@@ -57,7 +57,7 @@
         #buy-now {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            left: 30px; /* Kept away from the plushie */
             background: #ff0000;
             color: white;
             padding: 15px 30px;
@@ -66,20 +66,16 @@
             font-weight: bold;
             font-size: 20px;
             box-shadow: 0 0 20px #ff0000;
-            z-index: 100;
         }
     </style>
 </head>
 <body>
 
     <div id="vessel-container">
-        <!-- BODY -->
-        <img src="body.png" id="body-img">
-
-        <!-- HEAD -->
         <div id="head-wrapper">
             <img src="head.png" id="head-img">
         </div>
+        <img src="body.png" id="body-img">
     </div>
 
     <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
@@ -90,21 +86,27 @@
         document.addEventListener('mousemove', (e) => {
             const rect = head.getBoundingClientRect();
             
-            // Center point of the neck pivot
-            const pivotX = rect.left + (rect.width * 0.5);
-            const pivotY = rect.top + (rect.height * 0.85);
+            // The "hinge" point at the bottom of the head
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.bottom;
 
-            const deltaY = e.clientY - pivotY;
-            const deltaX = e.clientX - pivotX;
+            const deltaX = e.clientX - centerX;
+            const deltaY = e.clientY - centerY;
+
+            // Math.atan2 gives the angle in radians
             const angle = Math.atan2(deltaY, deltaX);
             
-            let rotation = angle * (180 / Math.PI);
+            // Convert to degrees
+            let deg = angle * (180 / Math.PI);
 
-            // Side-view offset (adjust this if he starts looking at the floor)
-            let finalRotation = rotation + 90;
+            // SML Logic: The head image is vertical, but we want it to 
+            // tilt left/right based on mouse position.
+            // Adjust the '+ 90' if the head starts sideways.
+            let finalRotation = deg + 90;
 
-            // Constrain movement so he doesn't spin his head like a fan
-            if (finalRotation > 35) finalRotation = 35;
+            // CLAMPING: Prevents the head from doing a full 360
+            // This creates that "stuck on a neck" feel
+            if (finalRotation > 45) finalRotation = 45;
             if (finalRotation < -45) finalRotation = -45;
 
             head.style.transform = `rotate(${finalRotation}deg)`;

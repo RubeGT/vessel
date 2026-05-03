@@ -15,22 +15,13 @@
             align-items: center;
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
-            perspective: 1000px; /* Enables 3D depth */
+            perspective: 1000px; 
         }
 
-        /* Promo Rotation Animation */
+        /* Smooth 360 Promo Rotation */
         @keyframes promoRotate {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(360deg); }
-        }
-
-        /* Subtle Vibration */
-        @keyframes vibrate {
-            0% { translate: 0 0; }
-            25% { translate: 2px -2px; }
-            50% { translate: -2px 1px; }
-            75% { translate: 1px -1px; }
-            100% { translate: 0 0; }
         }
 
         #promo-wrapper {
@@ -38,24 +29,24 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: promoRotate 8s infinite linear; /* Slow 360 rotation */
+            animation: promoRotate 10s infinite linear; /* Rotates the whole set */
             transform-style: preserve-3d;
         }
 
         #floating-text {
-            color: #d1d1d1; /* White-greyish */
+            color: #d1d1d1; 
             font-size: 32px;
             font-weight: bold;
             margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 5px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            text-align: center;
             backface-visibility: hidden;
         }
 
         #plushie-container {
             position: relative;
-            animation: vibrate 0.2s infinite; 
+            /* Shake removed from here */
         }
 
         #plushie-img {
@@ -76,7 +67,7 @@
         }
 
         #order-btn img {
-            width: 300px; /* Adjust size of button.png here */
+            width: 300px; 
             display: block;
         }
 
@@ -153,8 +144,9 @@
         const overlay = document.getElementById('purchase-overlay');
         const audio = document.getElementById('ambient-noise');
 
+        // Audio trigger
         document.body.addEventListener('click', () => {
-            audio.play().catch(e => console.log("Audio waiting for interaction"));
+            audio.play().catch(e => console.log("Audio play blocked"));
         }, { once: true });
 
         btn.addEventListener('click', () => {

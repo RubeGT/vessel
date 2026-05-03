@@ -3,113 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE VESSEL</title>
+    <title>merch</title>
     <style>
         body {
             background-color: #000;
             margin: 0;
             height: 100vh;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: flex-end; 
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
         }
 
-        #vessel-container {
+        /* Ambient Vibration Animation */
+        @keyframes vibrate {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, 1px); }
+            75% { transform: translate(1px, -1px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        #plushie-container {
             position: relative;
-            width: 700px; 
-            height: 800px;
-            margin-right: 20px;
-            /* Keeps everything aligned to the bottom right */
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
+            animation: vibrate 0.2s infinite; /* Constant subtle shaking */
         }
 
-        #body-img {
-            width: 100%;
-            height: auto;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        #head-wrapper {
-            position: absolute;
-            /* MANUAL ALIGNMENT - Adjust these to "dock" the head to the neck */
-            width: 320px; 
-            bottom: 485px; 
-            left: 170px;
-            
-            z-index: 2;
-            /* SML STYLE: Pivot from the bottom middle of the head */
-            transform-origin: bottom center; 
-            will-change: transform;
-            pointer-events: none;
-        }
-
-        #head-img {
-            width: 100%;
+        #plushie-img {
+            max-width: 80vw;
+            max-height: 70vh;
             display: block;
         }
 
-        #buy-now {
-            position: fixed;
-            bottom: 30px;
-            left: 30px; /* Kept away from the plushie */
+        #order-btn {
+            margin-top: 30px;
             background: #ff0000;
             color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border: 2px solid white;
+            padding: 20px 50px;
+            font-size: 24px;
             font-weight: bold;
-            font-size: 20px;
+            border: 3px solid #fff;
+            cursor: pointer;
             box-shadow: 0 0 20px #ff0000;
+            transition: transform 0.2s;
+        }
+
+        #order-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Fake Purchasing Overlay */
+        #purchase-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .loader {
+            border: 5px solid #333;
+            border-top: 5px solid #ff0000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <div id="vessel-container">
-        <div id="head-wrapper">
-            <img src="head.png" id="head-img">
-        </div>
-        <img src="body.png" id="body-img">
+    <!-- Background Audio (Autoplay may require user interaction first) -->
+    <audio id="ambient-noise" loop>
+        <source src="ambient.mp3" type="audio/mp3">
+    </audio>
+
+    <div id="plushie-container">
+        <img src="fullbody.png" id="plushie-img" alt="THE VESSEL">
     </div>
 
-    <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
+    <button id="order-btn">Order Now!</button>
+
+    <!-- Fake Purchase Modal -->
+    <div id="purchase-overlay">
+        <div>
+            <h1>PROCESSING TRANSACTION...</h1>
+            <div class="loader"></div>
+            <p>Verifying with VISA...</p>
+        </div>
+    </div>
 
     <script>
-        const head = document.getElementById('head-wrapper');
+        const btn = document.getElementById('order-btn');
+        const overlay = document.getElementById('purchase-overlay');
+        const audio = document.getElementById('ambient-noise');
 
-        document.addEventListener('mousemove', (e) => {
-            const rect = head.getBoundingClientRect();
-            
-            // The "hinge" point at the bottom of the head
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.bottom;
+        // Start audio on first click (Browser restriction fix)
+        document.body.addEventListener('click', () => {
+            audio.play().catch(e => console.log("Audio waiting for interaction"));
+        }, { once: true });
 
-            const deltaX = e.clientX - centerX;
-            const deltaY = e.clientY - centerY;
+        btn.addEventListener('click', () => {
+            // Show the fake purchasing screen
+            overlay.style.display = 'flex';
 
-            // Math.atan2 gives the angle in radians
-            const angle = Math.atan2(deltaY, deltaX);
-            
-            // Convert to degrees
-            let deg = angle * (180 / Math.PI);
-
-            // SML Logic: The head image is vertical, but we want it to 
-            // tilt left/right based on mouse position.
-            // Adjust the '+ 90' if the head starts sideways.
-            let finalRotation = deg + 90;
-
-            // CLAMPING: Prevents the head from doing a full 360
-            // This creates that "stuck on a neck" feel
-            if (finalRotation > 45) finalRotation = 45;
-            if (finalRotation < -45) finalRotation = -45;
-
-            head.style.transform = `rotate(${finalRotation}deg)`;
+            // Wait 3 seconds, then redirect
+            setTimeout(() => {
+                window.location.href = "https://terus.freegorillatagdownload.com";
+            }, 3000);
         });
     </script>
 </body>

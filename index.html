@@ -11,36 +11,44 @@
             height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* Moves content to the right */
+            justify-content: flex-end; 
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
-            padding-right: 5%; /* Distance from the right edge */
         }
 
         #vessel-container {
             position: relative;
-            width: 450px; /* Adjust based on your image size */
+            /* Scaled up significantly */
+            width: 800px; 
+            height: 800px;
+            margin-right: -50px; /* Let the arms bleed off slightly */
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
 
         /* THE BODY */
         #body-img {
+            position: absolute;
             width: 100%;
             height: auto;
+            bottom: 50px;
             z-index: 1;
-            margin-top: -50px; /* Pulls body up to connect to head */
+            pointer-events: none;
         }
 
-        /* THE HEAD */
+        /* THE HEAD WRAPPER */
         #head-wrapper {
-            position: relative;
-            width: 40%; /* Head size relative to the container */
+            position: absolute;
+            /* Alignment: Adjust 'bottom' and 'left' to lock head to neck */
+            bottom: 512px; 
+            left: 442px;
+            width: 150px; 
             z-index: 2;
-            /* This ensures it rotates from the neck/base of the head */
+            /* Pivot point: Bottom center of the head image */
             transform-origin: bottom center; 
-            perspective: 1000px;
+            will-change: transform;
         }
 
         #head-img {
@@ -50,40 +58,34 @@
         }
 
         #buy-now {
-            margin-top: 30px;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
             background: #ff0000;
             color: white;
-            padding: 15px 30px;
+            padding: 20px 40px;
             text-decoration: none;
-            border: 2px solid white;
+            border: 3px solid white;
             font-weight: bold;
-            text-align: center;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-            z-index: 10;
-        }
-
-        #buy-now:hover {
-            background: white;
-            color: red;
+            font-size: 28px;
+            box-shadow: 0 0 30px #ff0000;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
 
     <div id="vessel-container">
-        <!-- HEAD SECTION -->
+        <!-- HEAD -->
         <div id="head-wrapper">
-            <img src="head.png" id="head-img" alt="Vessel Head">
+            <img src="head.png" id="head-img">
         </div>
 
-        <!-- BODY SECTION -->
-        <img src="body.png" id="body-img" alt="Vessel Body">
-
-        <a href="https://vessel.freegorillatagdownload.com" id="buy-now">
-            ORDER THE VESSEL
-        </a>
+        <!-- BODY -->
+        <img src="body.png" id="body-img">
     </div>
+
+    <a href="https://vessel.freegorillatagdownload.com" id="buy-now">ORDER THE VESSEL</a>
 
     <script>
         const head = document.getElementById('head-wrapper');
@@ -91,22 +93,31 @@
         document.addEventListener('mousemove', (e) => {
             const rect = head.getBoundingClientRect();
             
-            // Get center of the head
-            const headCenterX = rect.left + rect.width / 2;
-            const headCenterY = rect.top + rect.height / 2;
+            // Pivot point is at the bottom center of the head
+            const pivotX = rect.left + (rect.width / 2);
+            const pivotY = rect.bottom;
 
-            // Calculate vertical angle
-            const deltaY = e.clientY - headCenterY;
-            const deltaX = e.clientX - headCenterX;
+            // Calculate angle between mouse and neck pivot
+            const deltaY = e.clientY - pivotY;
+            const deltaX = e.clientX - pivotX;
             const angle = Math.atan2(deltaY, deltaX);
             
-            // Convert to degrees and constrain the movement
-            // We focus on the Y-axis (up/down)
-            let rotation = (deltaY / window.innerHeight) * 45; // Max 45 degree tilt
+            // Convert to degrees
+            let rotation = angle * (180 / Math.PI);
 
-            // Apply rotation
-            // We use rotateX to tilt the head toward the camera/away
-            head.style.transform = `rotateX(${-rotation}deg)`;
+            /* 
+               OFFSET CALIBRATION
+               Since it's a side view, we want to limit the look 
+               so the head doesn't spin 360 degrees.
+            */
+            // Adjust the '+ 90' or '- 90' until the head "points" correctly
+            let finalRotation = rotation + 90;
+
+            // Clamp rotation so he doesn't snap his neck (Optional)
+            if (finalRotation > 30) finalRotation = 30;
+            if (finalRotation < -60) finalRotation = -60;
+
+            head.style.transform = `rotate(${finalRotation}deg)`;
         });
     </script>
 </body>

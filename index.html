@@ -58,6 +58,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: 100%;
         }
 
         @keyframes promoRotate {
@@ -74,6 +75,14 @@
             transform-style: preserve-3d;
         }
 
+        #items-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 80px; 
+        }
+
         #floating-text {
             color: #d1d1d1; 
             font-size: 32px;
@@ -84,10 +93,24 @@
             text-align: center;
         }
 
-        #plushie-img {
-            max-width: 80vw;
-            max-height: 60vh;
+        .merch-img {
+            max-width: 35vw; 
+            max-height: 45vh;
             display: block;
+            transition: transform 0.3s;
+        }
+
+        /* Hover effect for individual items */
+        .merch-item:hover .merch-img {
+            transform: scale(1.1);
+        }
+
+        .item-label {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #ff0000;
         }
 
         #order-btn {
@@ -100,7 +123,7 @@
         }
 
         #order-btn img {
-            width: 300px; 
+            width: 250px; 
             display: block;
         }
 
@@ -147,12 +170,25 @@
 
     <div id="main-content">
         <div id="promo-wrapper">
-            <div id="floating-text">New Merch!</div>
-            <div id="plushie-container">
-                <img src="fullbody.png" id="plushie-img" alt="THE VESSEL">
+            <div id="floating-text">Choose Your Vessel</div>
+            <div id="items-row">
+                
+                <!-- PLUSHIE (Standard flow) -->
+                <div class="merch-item">
+                    <img src="fullbody.png" class="merch-img" alt="THE PLUSHIE">
+                    <div class="item-label">PLUSHIE</div>
+                </div>
+
+                <!-- SHIRT (Direct Redirect) -->
+                <a href="https://YOUR-SHIRT-WEBSITE.com" class="merch-item" style="text-decoration: none; color: inherit;">
+                    <img src="shirt.png" class="merch-img" alt="THE SHIRT">
+                    <div class="item-label">SHIRT</div>
+                </a>
+
             </div>
         </div>
 
+        <!-- This button still controls the Plushie/Main redirect logic -->
         <button id="order-btn">
             <img src="button.png" alt="Order Now!">
         </button>
@@ -177,11 +213,9 @@
         function fadeInAudio(audioElement, duration) {
             audioElement.volume = 0;
             audioElement.play();
-
             let volume = 0;
-            const interval = 50; // Interval in milliseconds
+            const interval = 50; 
             const step = interval / duration;
-
             const fadeIn = setInterval(() => {
                 volume += step;
                 if (volume >= 1) {
@@ -196,8 +230,6 @@
         continueBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
             mainContent.style.display = 'flex';
-            
-            // Fade in over 3000ms (3 seconds)
             fadeInAudio(audio, 3000);
         });
 

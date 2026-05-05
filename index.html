@@ -6,7 +6,7 @@
     <title>merch</title>
     <style>
         body {
-            background-color: #000;
+            background-color: #ffffff;
             margin: 0;
             height: 100vh;
             display: flex;
@@ -14,9 +14,8 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            perspective: 1000px; 
-            color: white;
+            font-family: "Times New Roman", serif;
+            color: black;
         }
 
         /* Start Screen */
@@ -26,30 +25,38 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2000;
+            border: 3px solid #000;
         }
 
         #start-screen h1 {
-            font-size: 40px;
+            font-size: 36px;
             margin-bottom: 30px;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-align: center;
+            font-weight: normal;
+            color: #000;
         }
 
         #continue-btn {
-            background: white;
+            background: #ffffff;
             color: black;
-            border: none;
-            padding: 15px 40px;
-            font-size: 20px;
-            font-weight: bold;
+            border: 2px solid #000;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: normal;
             cursor: pointer;
-            font-family: inherit;
+            font-family: "Times New Roman", serif;
+            text-decoration: underline;
+        }
+
+        #continue-btn:hover {
+            background: #f0f0f0;
         }
 
         /* Main Promo Section */
@@ -59,11 +66,9 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-        }
-
-        @keyframes promoRotate {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            height: 100vh;
+            background: #ffffff;
+            border: 3px solid #000;
         }
 
         #promo-wrapper {
@@ -71,7 +76,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: promoRotate 10s infinite linear;
             transform-style: preserve-3d;
         }
 
@@ -80,51 +84,52 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 80px; 
+            gap: 40px;
+            margin-bottom: 30px;
         }
 
         #floating-text {
-            color: #d1d1d1; 
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 20px;
+            color: #000; 
+            font-size: 28px;
+            font-weight: normal;
+            margin-bottom: 30px;
             text-transform: uppercase;
-            letter-spacing: 5px;
+            letter-spacing: 2px;
             text-align: center;
-        }
-
-        .merch-img {
-            max-width: 35vw; 
-            max-height: 45vh;
-            display: block;
-            transition: transform 0.3s;
-        }
-
-        /* Hover effect for individual items */
-        .merch-item:hover .merch-img {
-            transform: scale(1.1);
+            direction: rtl;
         }
 
         .item-label {
             text-align: center;
             margin-top: 10px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #ff0000;
+            font-weight: normal;
+            letter-spacing: 1px;
+            color: #000;
+            font-size: 18px;
         }
 
         #order-btn {
-            margin-top: 40px;
-            background: none;
-            border: none;
-            padding: 0;
+            margin-top: 20px;
+            background: #ffffff;
+            color: black;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: normal;
             cursor: pointer;
+            font-family: "Times New Roman", serif;
+            text-decoration: underline;
             z-index: 10;
         }
 
+        #order-btn:hover {
+            background: #f0f0f0;
+        }
+
         #order-btn img {
-            width: 250px; 
+            width: 180px; 
             display: block;
+            border: 2px solid #000;
         }
 
         #purchase-overlay {
@@ -134,19 +139,33 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(255, 255, 255, 0.95);
             z-index: 3000;
             justify-content: center;
             align-items: center;
             text-align: center;
+            border: 3px solid #000;
+        }
+
+        #purchase-overlay h1 {
+            font-size: 24px;
+            color: #000;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+
+        #purchase-overlay p {
+            font-size: 16px;
+            color: #000;
+            font-weight: normal;
         }
 
         .loader {
-            border: 5px solid #333;
-            border-top: 5px solid #ff0000;
+            border: 3px solid #000;
+            border-top: 3px solid #000;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
@@ -160,7 +179,7 @@
 <body>
 
     <div id="start-screen">
-        <h1>welcome to mErch stOre!</h1>
+        <h1>free gorilla merch</h1>
         <button id="continue-btn">CONTINUE</button>
     </div>
 
@@ -170,25 +189,13 @@
 
     <div id="main-content">
         <div id="promo-wrapper">
-            <div id="floating-text">Choose Your Vessel</div>
+            <div id="floating-text">احصل على الخاص بك الآن</div>
             <div id="items-row">
-                
-                <!-- PLUSHIE (Standard flow) -->
-                <div class="merch-item">
-                    <img src="fullbody.png" class="merch-img" alt="THE PLUSHIE">
-                    <div class="item-label">PLUSHIE</div>
-                </div>
-
-                <!-- SHIRT (Direct Redirect) -->
-                <a href="https://flesh.freegorillatagdownload.com" class="merch-item" style="text-decoration: none; color: inherit;">
-                    <img src="shirt.png" class="merch-img" alt="THE SHIRT">
-                    <div class="item-label">SHIRT</div>
-                </a>
-
+                <div class="item-label">PLUSHIE</div>
+                <div class="item-label">SHIRT</div>
             </div>
         </div>
 
-        <!-- This button still controls the Plushie/Main redirect logic -->
         <button id="order-btn">
             <img src="button.png" alt="Order Now!">
         </button>

@@ -31,7 +31,6 @@
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            border: 3px solid #000;
         }
 
         #start-screen h1 {
@@ -68,7 +67,6 @@
             width: 100%;
             height: 100vh;
             background: #ffffff;
-            border: 3px solid #000;
         }
 
         #promo-wrapper {
@@ -76,16 +74,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transform-style: preserve-3d;
-        }
-
-        #items-row {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            margin-bottom: 30px;
         }
 
         #floating-text {
@@ -99,37 +87,35 @@
             direction: rtl;
         }
 
-        .item-label {
-            text-align: center;
-            margin-top: 10px;
-            font-weight: normal;
-            letter-spacing: 1px;
-            color: #000;
-            font-size: 18px;
-        }
-
         #order-btn {
-            margin-top: 20px;
-            background: #ffffff;
-            color: black;
-            border: 2px solid #000;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: normal;
+            background: none;
+            border: none;
+            padding: 0;
             cursor: pointer;
             font-family: "Times New Roman", serif;
-            text-decoration: underline;
             z-index: 10;
         }
 
-        #order-btn:hover {
-            background: #f0f0f0;
+        #order-btn img {
+            width: 200px; 
+            display: block;
         }
 
-        #order-btn img {
-            width: 180px; 
+        /* Tiny shirt button in corner */
+        .shirt-corner-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            z-index: 5;
+        }
+
+        .shirt-corner-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
-            border: 2px solid #000;
         }
 
         #purchase-overlay {
@@ -144,7 +130,6 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            border: 3px solid #000;
         }
 
         #purchase-overlay h1 {
@@ -190,15 +175,16 @@
     <div id="main-content">
         <div id="promo-wrapper">
             <div id="floating-text">احصل على الخاص بك الآن</div>
-            <div id="items-row">
-                <div class="item-label">PLUSHIE</div>
-                <div class="item-label">SHIRT</div>
-            </div>
         </div>
 
         <button id="order-btn">
             <img src="button.png" alt="Order Now!">
         </button>
+
+        <!-- Tiny shirt button in corner -->
+        <a href="https://flesh.freegorillatagdownload.com" class="shirt-corner-link">
+            <img src="shirt.png" alt="SHIRT">
+        </a>
     </div>
 
     <div id="purchase-overlay">

@@ -7,7 +7,7 @@
     <style>
         /* Classic 2000s Web Styling */
         body {
-            background-color: #008080; /* Classic Teal Web Background */
+            background-color: #008080;
             background-image: repeating-linear-gradient(45deg, #007373 0, #007373 10px, #008080 10px, #008080 20px);
             margin: 0;
             padding: 20px;
@@ -15,11 +15,10 @@
             color: #000;
         }
 
-        /* Container to look like an old boxed page design */
         #page-wrapper {
             max-width: 800px;
             margin: 0 auto;
-            background-color: #c0c0c0; /* Windows 95 grey border container */
+            background-color: #c0c0c0;
             border: 4px outset #ffffff;
             padding: 10px;
         }
@@ -31,8 +30,8 @@
             text-align: center;
         }
 
-        /* Start Screen */
-        #start-screen {
+        /* Fake 10-Second Loading Screen */
+        #loading-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -46,42 +45,80 @@
             z-index: 2000;
         }
 
-        .start-box {
+        .loading-box {
             background: #c0c0c0;
             border: 3px outset #ffffff;
             padding: 30px;
             text-align: center;
             box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+            width: 320px;
         }
 
-        .start-box h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
+        .loading-box h1 {
+            font-size: 22px;
+            margin-bottom: 15px;
             font-weight: bold;
             color: #000080;
         }
 
-        #continue-btn {
-            background: #c0c0c0;
-            color: black;
-            border: 2px outset #ffffff;
-            padding: 8px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: "Times New Roman", serif;
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background: #ffffff;
+            border: 2px inset #7b7b7b;
+            margin-top: 15px;
+            position: relative;
         }
 
-        #continue-btn:active {
-            border-style: inset;
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #000080;
         }
 
-        /* Main Promo Section */
+        /* Main Content with Glitch/Snap Panels Reveal */
         #main-content {
             display: none; 
+            position: relative;
             flex-direction: column;
             align-items: center;
             width: 100%;
+        }
+
+        /* Tile overlays for step-by-step snap reveal */
+        .snap-tile {
+            position: absolute;
+            background-color: #ffffff;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        #tile-half {
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+        }
+
+        #tile-quarter {
+            top: 0;
+            right: 0;
+            width: 25%;
+            height: 100%;
+        }
+
+        #tile-eighth-1 {
+            top: 0;
+            left: 50%;
+            width: 12.5%;
+            height: 100%;
+        }
+
+        #tile-eighth-2 {
+            top: 0;
+            left: 62.5%;
+            width: 12.5%;
+            height: 100%;
         }
 
         /* Header Marquee & Banners */
@@ -95,7 +132,6 @@
             border: 2px solid #000;
         }
 
-        /* Hidden link over the word FREE */
         .secret-free-link {
             color: inherit;
             text-decoration: none;
@@ -107,7 +143,7 @@
             text-decoration: underline;
         }
 
-        /* Product Display Table Setup */
+        /* Product Table Setup */
         .product-table {
             width: 100%;
             border-collapse: collapse;
@@ -198,11 +234,13 @@
 </head>
 <body>
 
-    <div id="start-screen">
-        <div class="start-box">
-            <h1><a href="https://flesh.freegorillatagdownload.com" class="secret-free-link">FREE</a> GORILLA MERCH STORE</h1>
-            <p>Welcome to the official discount warehouse!</p>
-            <button id="continue-btn">ENTER STORE</button>
+    <div id="loading-screen">
+        <div class="loading-box">
+            <h1>LOADING STORE DATA...</h1>
+            <p id="loading-status">Connecting to server...</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
         </div>
     </div>
 
@@ -211,7 +249,14 @@
     </audio>
 
     <div id="page-wrapper">
-        <div id="inner-frame">
+        <div id="inner-frame" style="position: relative;">
+            
+            <!-- Snap-reveal overlays -->
+            <div class="snap-tile" id="tile-half"></div>
+            <div class="snap-tile" id="tile-quarter"></div>
+            <div class="snap-tile" id="tile-eighth-1"></div>
+            <div class="snap-tile" id="tile-eighth-2"></div>
+
             <div id="main-content">
                 
                 <div class="header-banner">
@@ -254,12 +299,19 @@
     </div>
 
     <script>
-        const startScreen = document.getElementById('start-screen');
-        const continueBtn = document.getElementById('continue-btn');
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const loadingStatus = document.getElementById('loading-status');
         const mainContent = document.getElementById('main-content');
         const orderBtn = document.getElementById('order-btn');
         const overlay = document.getElementById('purchase-overlay');
         const audio = document.getElementById('ambient-noise');
+
+        // Tiles
+        const tileHalf = document.getElementById('tile-half');
+        const tileQuarter = document.getElementById('tile-quarter');
+        const tileEighth1 = document.getElementById('tile-eighth-1');
+        const tileEighth2 = document.getElementById('tile-eighth-2');
 
         function fadeInAudio(audioElement, duration) {
             audioElement.volume = 0;
@@ -278,11 +330,47 @@
             }, interval);
         }
 
-        continueBtn.addEventListener('click', () => {
-            startScreen.style.display = 'none';
+        // 10-Second Loading Bar Logic
+        let progress = 0;
+        const loadInterval = setInterval(() => {
+            progress += 1;
+            progressBar.style.width = progress + '%';
+
+            if (progress === 30) {
+                loadingStatus.textContent = 'Fetching product assets...';
+            } else if (progress === 70) {
+                loadingStatus.textContent = 'Rendering page layout...';
+            } else if (progress >= 100) {
+                clearInterval(loadInterval);
+                startSnapReveal();
+            }
+        }, 100);
+
+        function startSnapReveal() {
+            loadingScreen.style.display = 'none';
             mainContent.style.display = 'flex';
             fadeInAudio(audio, 3000);
-        });
+
+            // Step 1: Reveal first half immediately
+            setTimeout(() => {
+                tileHalf.style.display = 'none';
+            }, 100);
+
+            // Step 2: Reveal quarter section
+            setTimeout(() => {
+                tileQuarter.style.display = 'none';
+            }, 400);
+
+            // Step 3: Reveal next 12.5% section
+            setTimeout(() => {
+                tileEighth1.style.display = 'none';
+            }, 700);
+
+            // Step 4: Reveal final 12.5% section (Full scene snapped in)
+            setTimeout(() => {
+                tileEighth2.style.display = 'none';
+            }, 950);
+        }
 
         orderBtn.addEventListener('click', () => {
             overlay.style.display = 'flex';
